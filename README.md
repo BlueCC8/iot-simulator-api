@@ -14,7 +14,7 @@ Make sure you have installed:
 ### Prerequisites
 * Run ```npm install``` 
 * If you run locally run the mongodb first using the command ```mongod``` and 
-make sure to use the right connection string ```mongoose.connect("mongodb://localhost/apiQuizTest")```
+make sure to use the right connection string ```mongoose.connect("mongodb://localhost/iot-simulator")```
 * Run ```nodemon index.js``` nodemon will watch for changes on your code
 
 ### Installing
@@ -33,6 +33,7 @@ or download the zip file
 
 * [Nodemon](https://github.com/remy/nodemon) Watcher
 * [Mocha](https://mochajs.org/) Test Framework
+* [Mongoose](https://mongoosejs.com) ODM
 * [MongoDB](https://www.mongodb.com/download-center#community) NoSQL database
 * [Node](https://nodejs.org/en/) NodeJS
 
