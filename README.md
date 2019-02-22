@@ -2,7 +2,8 @@
 # Project Title
 
 API made for the IoT Simulator APP in order to get and receive different types of requests 
-![Mockup](/uploads/-/system/temp/8849d13f83f564fba4bee152bdf2b856/Mockup.jpg)
+
+![alt text](readmeImages/Mockup.jpg)
 
 ## Getting Started
 Make sure you have installed:
