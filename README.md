@@ -3,7 +3,7 @@
 
 API made for the IoT Simulator APP in order to get and receive different types of requests 
 
-![alt text](readmeImages/Mockup.jpg)
+![databseModel](readmeImages/Mockup.jpg)
 
 ## Getting Started
 Make sure you have installed:
@@ -33,7 +33,7 @@ or download the zip file
 
 * [Nodemon](https://github.com/remy/nodemon) Watcher
 * [Mocha](https://mochajs.org/) Test Framework
-* [MongoDB] (https://www.mongodb.com/download-center#community) NoSQL database
+* [MongoDB](https://www.mongodb.com/download-center#community) NoSQL database
 * [Node](https://nodejs.org/en/) NodeJS
 
 ## Contributing
