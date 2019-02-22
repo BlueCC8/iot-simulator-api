@@ -1,0 +1,23 @@
+{
+  "name": "iot-simulator-api",
+  "version": "1.0.0",
+  "description": "api for the iot simulator",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon node index.js",
+    "test": "SET NODE_ENV=test | nodemon --exec mocha --recursive"
+  },
+  "author": "CC",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.3",
+    "mongoose": "^5.1.1",
+    "mongoose-validator": "^2.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5",
+    "supertest": "^3.1.0",
+    "mocha": "^5.2.0"
+  }
+}
