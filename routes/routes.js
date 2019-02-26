@@ -8,11 +8,18 @@ const DeviceController = require("../controllers/Device_controller")
 const ConfigDeviceController = require("../controllers/ConfigDevice_controller");
 const RoomController = require("../controllers/Room_controller");
 const UserController = require("../controllers/User_controller");
-const PopulateAll = require("../populate/insert_all");
 
+const PopulateAll = require("../populate/insert_all");
+const PopulateSubdocuments = require("../populate/populate_subdocuments")
 module.exports = (app) => {
     // ! Populate all database
     app.get("/api/populate/insert_all", PopulateAll.insertData);
+
+    app.get('/api/populate/populateLinkLayer', PopulateSubdocuments.populateLinkLayer);
+    app.get('/api/populate/populateDevice', PopulateSubdocuments.populateDevice);
+    app.get('/api/populate/populateConfigDevice', PopulateSubdocuments.populateConfigDevice);
+    app.get('/api/populate/populateRoom', PopulateSubdocuments.populateRoom);
+    app.get('/api/populate/populateUser', PopulateSubdocuments.populateUser);
 
     // * Ethernet
     app.get('/api/ethernet/greet', EthernetController.greeting);
