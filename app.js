@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const routes = require('./routes/routes');
 const cors = require('cors');
 const app = express();
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const flash = require('express-flash-messages');
+const passport = require("passport");
+
+//! Note Since version 1.5.0, the cookie-parser middleware no longer needs to be used for this module to work. This module now directly reads and writes cookies on req/res.
+//! Using cookie-parser may result in issues if the secret is not the same between this module and cookie-parser.
 
 mongoose.Promise = global.Promise
 //node env environment variable if not in test 
@@ -27,13 +34,45 @@ if (process.env.NODE_ENV !== 'test') {
                 .catch((err) => console.error(err))
         })
 }
+app.use(
+    session({
+        resave: false,
+        saveUninitialized: true,
+        secret: process.env.SESSION_SEC || "You must generate a random session secret"
+    })
+);
+app.use(flash());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({
     'extended': false
 }));
+
+// * Passport
+app.use(passport.initialize());
+app.use(passport.session());
+require("./config/passport/passport")(passport);
+
+
 //* Enhance app to allow requests coming from other applications (React/Angular), not only direct callers like Postman 
-app.use(cors());
+
 routes(app);
+
+
+// * Login Handler
+app.post("/login", passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/login",
+        failureFlash: true,
+        successFlash: 'Welcome!'
+    }),
+    function (err, req, res, next) {
+        // failure in login test route
+        return res.send({
+            'status': 'err',
+            'message': err.message
+        })
+    });
 
 app.use((err, req, res, next) => {
     res.status(422).send({

@@ -10,8 +10,41 @@ const RoomController = require("../controllers/Room_controller");
 const UserController = require("../controllers/User_controller");
 
 const PopulateAll = require("../populate/insert_all");
-const PopulateSubdocuments = require("../populate/populate_subdocuments")
+const PopulateSubdocuments = require("../populate/populate_subdocuments");
+
+const PassportController = require("../config/passport/passport_controller");
+// * Passport middleware
+const loggedInOnly = PassportController.loggedInOnly;
+const loggedOutOnly = PassportController.loggedOutOnly;
+
 module.exports = (app) => {
+    // ! Login
+
+    // * Main Page
+    app.get("/", loggedInOnly, PassportController.renderIndex);
+
+    // Login View
+    app.get("/login", loggedOutOnly, PassportController.renderLogin);
+
+    // // Login Handler
+    // app.post("/login", PassportController.authenticatePassport,
+    //     function (err, req, res, next) {
+    //         // failure in login test route
+    //         return res.send({
+    //             'status': 'err',
+    //             'message': err.message
+    //         })
+    //     });
+
+    // * Register View
+    app.get("/register", loggedOutOnly, PassportController.renderRegister);
+
+    // * Register Handler
+    app.post("/register", PassportController.register);
+
+    // * Logout Handler
+    app.all("/logout", PassportController.logout);
+
     // ! Populate all database
     app.get("/api/populate/insert_all", PopulateAll.insertData);
 
@@ -90,6 +123,4 @@ module.exports = (app) => {
     app.get('/api/user', UserController.read);
     app.put('/api/user:id', UserController.update);
     app.delete('/api/user:id', UserController.delete);
-
-
 }

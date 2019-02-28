@@ -1,6 +1,8 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var validate = require("mongoose-validator");
+const uniqueValidator = require("mongoose-unique-validator");
+const bcrypt = require("bcrypt");
 
 var emailValidator = [
     validate({
@@ -26,10 +28,9 @@ var UserSchema = new Schema({
         trim: true,
         validate: emailValidator
     },
-    password: {
+    passwordHash: {
         type: String,
-        trim: true,
-        validate: hashValidator
+        trim: true
     },
     roomIDs: [{
         type: Schema.Types.ObjectId,
@@ -40,5 +41,14 @@ var UserSchema = new Schema({
         default: Date.now
     },
 });
+
+UserSchema.methods.validPassword = function (password) {
+    return bcrypt.compareSync(password, this.passwordHash);
+};
+
+UserSchema.virtual("password").set(function (value) {
+    this.passwordHash = bcrypt.hashSync(value, 12);
+});
+UserSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", UserSchema);
