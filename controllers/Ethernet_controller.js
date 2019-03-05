@@ -10,13 +10,19 @@ module.exports = {
         const etherProps = req.body;
         Ether.create(etherProps)
             .then(ether =>
-                res.status(200).send(ether)
+                res.status(201).json({
+                    message: "Ethernet added successfully",
+                    etherId: ether._id
+                })
             )
             .catch(next) //next middleware in chain
     },
     read(req, res, next) {
         Ether.find({}).then((ethers) => {
-                res.status(200).send(ethers)
+                res.status(200).json({
+                    message: "Ethernets fetched successfully!",
+                    ethers: ethers
+                });
             })
             .catch(next)
     },
@@ -32,7 +38,12 @@ module.exports = {
                 Ether.findById({
                         _id: etherId
                     })
-                    .then(ether => res.status(200).send(ether))
+                    .then(ether => {
+                        res.status(200).json({
+                            message: "Ethernets updated successfully!",
+                            ether: ether
+                        });
+                    })
                     .catch(next)
             })
     },
@@ -40,8 +51,8 @@ module.exports = {
     delete(req, res, next) {
         const etherId = req.params.id;
         const etherProps = req.body;
-
-        Ether.findByIdAndRemove({
+        console.log("delete works?")
+        Ether.findByIdAndDelete({
                 _id: etherId
             })
             .then(ether => res.status(204).send(ether))
