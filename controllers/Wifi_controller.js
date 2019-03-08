@@ -1,51 +1,69 @@
-const Wifi = require("../models/Wifi.js");
+/* eslint-disable no-underscore-dangle */
+const Wifi = require('../models/Wifi.js');
+
 module.exports = {
-    greeting(req, res) {
-        res.send({
-            hi: "Wifi greets you"
+  greeting(req, res) {
+    res.send({
+      hi: 'Wifi greets you'
+    });
+  },
+  create(req, res, next) {
+    const wifiProps = req.body;
+    Wifi.create(wifiProps)
+      .then(wifi =>
+        res.status(201).json({
+          wifiId: wifi._id
         })
-    },
-    create(req, res, next) {
-        console.log(req.body);
-        const wifiProps = req.body;
-        Wifi.create(wifiProps)
-            .then(wifi =>
-                res.status(200).send(wifi)
-            )
-            .catch(next) //next middleware in chain
-    },
-    read(req, res, next) {
-        Wifi.find({}).then((wifis) => {
-                res.status(200).send(wifis)
-            })
-            .catch(next)
-    },
+      )
+      .catch(next); // next middleware in chain
+  },
+  readAll(req, res, next) {
+    Wifi.find({})
+      .then(wifi => {
+        res.status(200).json(wifi);
+      })
+      .catch(next);
+  },
+  readOne(req, res, next) {
+    const wifiId = req.params.id;
+    Wifi.findOne({
+      _id: wifiId
+    })
+      .then(wifi => {
+        res.status(200).json(wifi);
+      })
+      .catch(next);
+  },
 
-    update(req, res, next) {
-        const wifiId = req.params.id;
-        const wifiProps = req.body;
+  update(req, res, next) {
+    const wifiId = req.params.id;
+    const wifiProps = req.body;
 
-        Ether.findByIdAndUpdate({
-                _id: wifiId
-            }, wifiProps)
-            .then(() => {
-                Wifi.findById({
-                        _id: wifiId
-                    })
-                    .then(wifi => res.status(200).send(wifi))
-                    .catch(next)
-            })
-    },
+    Wifi.findOneAndUpdate(
+      {
+        _id: wifiId
+      },
+      wifiProps
+    ).then(() => {
+      Wifi.findOne({
+        _id: wifiId
+      })
+        .then(wifi => {
+          res.status(200).send(wifi);
+        })
+        .catch(next);
+    });
+  },
 
-    delete(req, res, next) {
-        const wifiId = req.params.id;
-        const wifiProps = req.body;
+  delete(req, res, next) {
+    const wifiId = req.params.id;
+    // const wifiProps = req.body;
 
-        Wifi.findByIdAndRemove({
-                _id: wifiId
-            })
-            .then(wifi => res.status(204).send(wifi))
-            //204 stands for succes
-            .catch(next)
-    }
-}
+    Wifi.findOneAndDelete({
+      _id: wifiId
+    })
+      .then(wifi => res.status(204).send(wifi))
+      // 204 stands for succes
+      .catch(next);
+  }
+};

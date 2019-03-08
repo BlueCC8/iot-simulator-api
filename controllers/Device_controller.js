@@ -1,51 +1,68 @@
-const Device = require("../models/Device.js");
+/* eslint-disable no-underscore-dangle */
+const Device = require('../models/Device.js');
+
 module.exports = {
-    greeting(req, res) {
-        res.send({
-            hi: "Device greets you"
+  greeting(req, res) {
+    res.send({
+      hi: 'Device greets you'
+    });
+  },
+  create(req, res, next) {
+    const deviceProps = req.body;
+    Device.create(deviceProps)
+      .then(device =>
+        res.status(201).json({
+          deviceId: device._id
         })
-    },
-    create(req, res, next) {
-        console.log(req.body);
-        const deviceProps = req.body;
-        Device.create(deviceProps)
-            .then(device =>
-                res.status(200).send(device)
-            )
-            .catch(next) //next middleware in chain
-    },
-    read(req, res, next) {
-        Device.find({}).then((devices) => {
-                res.status(200).send(devices)
-            })
-            .catch(next)
-    },
+      )
+      .catch(next); // next middleware in chain
+  },
+  readAll(req, res, next) {
+    Device.find({})
+      .then(devices => {
+        res.status(200).json(devices);
+      })
+      .catch(next);
+  },
+  readOne(req, res, next) {
+    const deviceId = req.params.id;
+    Device.findOne({
+      _id: deviceId
+    })
+      .then(device => {
+        res.status(200).json(device);
+      })
+      .catch(next);
+  },
 
-    update(req, res, next) {
-        const deviceId = req.params.id;
-        const deviceProps = req.body;
+  update(req, res, next) {
+    const deviceId = req.params.id;
+    const deviceProps = req.body;
 
-        Device.findByIdAndUpdate({
-                _id: deviceId
-            }, deviceProps)
-            .then(() => {
-                Device.findById({
-                        _id: deviceId
-                    })
-                    .then(device => res.status(200).send(device))
-                    .catch(next)
-            })
-    },
+    Device.findOneAndUpdate(
+      {
+        _id: deviceId
+      },
+      deviceProps
+    ).then(() => {
+      Device.findById({
+        _id: deviceId
+      })
+        .then(device => {
+          res.status(200).json(device);
+        })
+        .catch(next);
+    });
+  },
 
-    delete(req, res, next) {
-        const deviceId = req.params.id;
-        const deviceProps = req.body;
+  delete(req, res, next) {
+    const deviceId = req.params.id;
+    // const deviceProps = req.body;
 
-        Device.findByIdAndRemove({
-                _id: deviceId
-            })
-            .then(device => res.status(204).send(device))
-            //204 stands for succes
-            .catch(next)
-    }
-}
+    Device.findOneAndDelete({
+      _id: deviceId
+    })
+      .then(device => res.status(204).send(device))
+      .catch(next);
+  }
+};

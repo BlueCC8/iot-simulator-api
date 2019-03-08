@@ -1,51 +1,69 @@
-const Polygon = require("../models/Polygon.js");
+/* eslint-disable no-underscore-dangle */
+const Polygon = require('../models/Polygon.js');
+
 module.exports = {
-    greeting(req, res) {
-        res.send({
-            hi: "Polygon greets you"
+  greeting(req, res) {
+    res.send({
+      hi: 'Polygon greets you'
+    });
+  },
+  create(req, res, next) {
+    const polygonProps = req.body;
+    Polygon.create(polygonProps)
+      .then(polygon =>
+        res.status(201).json({
+          polygonId: polygon._id
         })
-    },
-    create(req, res, next) {
-        console.log(req.body);
-        const polygonProps = req.body;
-        Polygon.create(polygonProps)
-            .then(polygon =>
-                res.status(200).send(polygon)
-            )
-            .catch(next) //next middleware in chain
-    },
-    read(req, res, next) {
-        Polygon.find({}).then((polygons) => {
-                res.status(200).send(polygons)
-            })
-            .catch(next)
-    },
+      )
+      .catch(next); // next middleware in chain
+  },
+  readAll(req, res, next) {
+    Polygon.find({})
+      .then(polygon => {
+        res.status(200).json(polygon);
+      })
+      .catch(next);
+  },
+  readOne(req, res, next) {
+    const polyId = req.params.id;
+    Polygon.findOne({
+      _id: polyId
+    })
+      .then(polygon => {
+        res.status(200).json(polygon);
+      })
+      .catch(next);
+  },
 
-    update(req, res, next) {
-        const polygonId = req.params.id;
-        const polygonProps = req.body;
+  update(req, res, next) {
+    const polygonId = req.params.id;
+    const polygonProps = req.body;
 
-        Polygon.findByIdAndUpdate({
-                _id: polygonId
-            }, polygonProps)
-            .then(() => {
-                Polygon.findById({
-                        _id: polygonId
-                    })
-                    .then(polygon => res.status(200).send(polygon))
-                    .catch(next)
-            })
-    },
+    Polygon.findOneAndUpdate(
+      {
+        _id: polygonId
+      },
+      polygonProps
+    ).then(() => {
+      Polygon.findOne({
+        _id: polygonId
+      })
+        .then(polygon => {
+          res.status(200).json(polygon);
+        })
+        .catch(next);
+    });
+  },
 
-    delete(req, res, next) {
-        const polygonId = req.params.id;
-        const polygonProps = req.body;
+  delete(req, res, next) {
+    const polygonId = req.params.id;
+    // const polygonProps = req.body;
 
-        Polygon.findByIdAndRemove({
-                _id: polygonId
-            })
-            .then(polygon => res.status(204).send(polygon))
-            //204 stands for succes
-            .catch(next)
-    }
-}
+    Polygon.findOneAndDelete({
+      _id: polygonId
+    })
+      .then(polygon => res.status(204).send(polygon))
+      // 204 stands for succes
+      .catch(next);
+  }
+};

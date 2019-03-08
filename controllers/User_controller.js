@@ -1,51 +1,69 @@
-const User = require("../models/User");
+/* eslint-disable no-underscore-dangle */
+const User = require('../models/User');
+
 module.exports = {
-    greeting(req, res) {
-        res.send({
-            hi: "User greets you"
+  greeting(req, res) {
+    res.send({
+      hi: 'User greets you'
+    });
+  },
+  create(req, res, next) {
+    const userProps = req.body;
+    User.create(userProps)
+      .then(user =>
+        res.status(201).json({
+          userId: user._id
         })
-    },
-    create(req, res, next) {
-        console.log(req.body);
-        const userProps = req.body;
-        User.create(userProps)
-            .then(user =>
-                res.status(200).send(user)
-            )
-            .catch(next) //next middleware in chain
-    },
-    read(req, res, next) {
-        User.find({}).then((users) => {
-                res.status(200).send(users)
-            })
-            .catch(next)
-    },
+      )
+      .catch(next); // next middleware in chain
+  },
+  readAll(req, res, next) {
+    User.find({})
+      .then(users => {
+        res.status(200).json(users);
+      })
+      .catch(next);
+  },
+  readOne(req, res, next) {
+    const userId = req.params.id;
+    User.findOne({
+      _id: userId
+    })
+      .then(user => {
+        res.status(200).json(user);
+      })
+      .catch(next);
+  },
 
-    update(req, res, next) {
-        const userId = req.params.id;
-        const userProps = req.body;
+  update(req, res, next) {
+    const userId = req.params.id;
+    const userProps = req.body;
 
-        User.findByIdAndUpdate({
-                _id: userId
-            }, userProps)
-            .then(() => {
-                User.findById({
-                        _id: userId
-                    })
-                    .then(user => res.status(200).send(user))
-                    .catch(next)
-            })
-    },
+    User.findOneAndUpdate(
+      {
+        _id: userId
+      },
+      userProps
+    ).then(() => {
+      User.findOne({
+        _id: userId
+      })
+        .then(user => {
+          res.status(200).json(user);
+        })
+        .catch(next);
+    });
+  },
 
-    delete(req, res, next) {
-        const userId = req.params.id;
-        const userProps = req.body;
+  delete(req, res, next) {
+    const userId = req.params.id;
+    // const userProps = req.body;
 
-        User.findByIdAndRemove({
-                _id: userId
-            })
-            .then(user => res.status(204).send(user))
-            // * 204 stands for succes
-            .catch(next)
-    }
-}
+    User.findOneAndDelete({
+      _id: userId
+    })
+      .then(user => res.status(204).send(user))
+      // * 204 stands for succes
+      .catch(next);
+  }
+};

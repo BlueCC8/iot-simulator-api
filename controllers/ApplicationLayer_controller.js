@@ -1,51 +1,68 @@
-const AppLayer = require("../models/ApplicationLayer.js");
+/* eslint-disable no-underscore-dangle */
+const AppLayer = require('../models/ApplicationLayer');
+
 module.exports = {
-    greeting(req, res) {
-        res.send({
-            hi: "Application Layer greets you"
+  greeting(req, res) {
+    res.send({
+      hi: 'Application Layer greets you'
+    });
+  },
+  create(req, res, next) {
+    const appLayerProps = req.body;
+    AppLayer.create(appLayerProps)
+      .then(appLayer =>
+        res.status(201).json({
+          appLayerId: appLayer._id
         })
-    },
-    create(req, res, next) {
-        console.log(req.body);
-        const appLayerProps = req.body;
-        AppLayer.create(appLayerProps)
-            .then(appLayer =>
-                res.status(200).send(appLayer)
-            )
-            .catch(next) //next middleware in chain
-    },
-    read(req, res, next) {
-        AppLayer.find({}).then((appLayers) => {
-                res.status(200).send(appLayers)
-            })
-            .catch(next)
-    },
+      )
+      .catch(next);
+  },
+  readAll(req, res, next) {
+    AppLayer.find({})
+      .then(appLayers => {
+        res.status(200).json(appLayers);
+      })
+      .catch(next);
+  },
+  readOne(req, res, next) {
+    const appLayerId = req.params.id;
+    AppLayer.findOne({
+      _id: appLayerId
+    })
+      .then(appLayer => {
+        res.status(200).json(appLayer);
+      })
+      .catch(next);
+  },
 
-    update(req, res, next) {
-        const appLayerId = req.params.id;
-        const appLayerProps = req.body;
+  update(req, res, next) {
+    const appLayerId = req.params.id;
+    const appLayerProps = req.body;
 
-        AppLayer.findByIdAndUpdate({
-                _id: appLayerId
-            }, appLayerProps)
-            .then(() => {
-                AppLayer.findById({
-                        _id: appLayerId
-                    })
-                    .then(appLayer => res.status(200).send(appLayer))
-                    .catch(next)
-            })
-    },
+    AppLayer.findOneAndUpdate(
+      {
+        _id: appLayerId
+      },
+      appLayerProps
+    ).then(() => {
+      AppLayer.findOne({
+        _id: appLayerId
+      })
+        .then(appLayer => {
+          res.status(200).json(appLayer);
+        })
+        .catch(next);
+    });
+  },
 
-    delete(req, res, next) {
-        const appLayerId = req.params.id;
-        const appLayerProps = req.body;
+  delete(req, res, next) {
+    const appLayerId = req.params.id;
+    // const appLayerProps = req.body;
 
-        AppLayer.findByIdAndRemove({
-                _id: appLayerId
-            })
-            .then(applayer => res.status(204).send(appLayer))
-            //204 stands for succes
-            .catch(next)
-    }
-}
+    AppLayer.findOneAndDelete({
+      _id: appLayerId
+    })
+      .then(appLayer => res.status(204).send(appLayer))
+      .catch(next);
+  }
+};
