@@ -22,9 +22,24 @@ module.exports = {
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    Ether.find({})
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = Ether.find();
+    let fetchedEthers;
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
       .then(ethers => {
-        res.status(200).json(ethers);
+        fetchedEthers = ethers;
+        return Ether.countDocuments();
+      })
+      .then(count => {
+        console.log({ fetchedEthers, maxEthers: count });
+        res.status(200).json({
+          ethers: fetchedEthers,
+          maxEthers: count
+        });
       })
       .catch(next);
   },
