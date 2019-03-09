@@ -22,7 +22,8 @@ const emailValidator = [
 const UserSchema = new Schema({
   username: {
     type: String,
-    trim: true
+    trim: true,
+    unique: true
   },
   email: {
     type: String,
@@ -45,11 +46,11 @@ const UserSchema = new Schema({
   }
 });
 
-UserSchema.methods.validPassword = password => {
+UserSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.passwordHash);
 };
 
-UserSchema.virtual('password').set(value => {
+UserSchema.virtual('password').set(function(value) {
   this.passwordHash = bcrypt.hashSync(value, 12);
 });
 UserSchema.plugin(uniqueValidator);

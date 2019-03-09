@@ -12,6 +12,8 @@ const routes = require('./routes/routes');
 //! Using cookie-parser may result in issues if the secret is not the same between this module and cookie-parser.
 
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 // node env environment variable if not in test
 // test is separated in test/test_helper
 if (process.env.NODE_ENV !== 'test') {
@@ -62,15 +64,24 @@ require('./config/passport/passport')(passport);
 
 //* Enhance app to allow requests coming from other applications (React/Angular), not only direct callers like Postman
 // * Login Handler
-app.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true,
-    successFlash: 'Welcome!'
-  })
-);
+app.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      next(err);
+    }
+    if (!user) {
+      res.json({
+        message: info,
+        authenticated: false
+      });
+    } else {
+      res.json({
+        message: 'Success login app',
+        authenticated: true
+      });
+    }
+  })(req, res, next);
+});
 // app.use((err, req, res) => {
 //   res.status(422).send({
 //     err: err.message

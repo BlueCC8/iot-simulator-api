@@ -22,16 +22,16 @@ module.exports = app => {
   // ! Login
 
   // * Main Page
-  app.get('/', loggedInOnly, PassportController.renderIndex);
+  // app.get('/', loggedInOnly, PassportController.renderIndex);
 
-  // Login View
-  app.get('/login', loggedOutOnly, PassportController.renderLogin);
+  // // Login View
+  // app.get('/login', loggedOutOnly, PassportController.renderLogin);
 
-  // * Register View
-  app.get('/register', loggedOutOnly, PassportController.renderRegister);
+  // // * Register View
+  // app.get('/signup', loggedOutOnly, PassportController.renderRegister);
 
   // * Register Handler
-  app.post('/register', PassportController.register);
+  app.post('/signup', PassportController.register);
 
   // * Logout Handler
   app.all('/logout', PassportController.logout);

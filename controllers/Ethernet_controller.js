@@ -35,7 +35,6 @@ module.exports = {
         return Ether.countDocuments();
       })
       .then(count => {
-        console.log({ fetchedEthers, maxEthers: count });
         res.status(200).json({
           ethers: fetchedEthers,
           maxEthers: count
