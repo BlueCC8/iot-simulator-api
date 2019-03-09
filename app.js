@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
+const path = require('path');
 const session = require('express-session');
 const flash = require('express-flash-messages');
 const passport = require('passport');
@@ -53,7 +54,7 @@ app.use(
     extended: false
   })
 );
-
+app.use('/images', express.static(path.join('images')));
 // * Passport
 app.use(passport.initialize());
 app.use(passport.session());

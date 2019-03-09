@@ -16,6 +16,7 @@ const PassportController = require('../config/passport/passport_controller');
 // * Passport middleware
 const { loggedInOnly } = PassportController;
 const { loggedOutOnly } = PassportController;
+const multer = require('../config/multer/multer');
 
 module.exports = app => {
   // ! Login
@@ -46,10 +47,10 @@ module.exports = app => {
 
   // * Ethernet
   app.get('/api/ethernet/greet', EthernetController.greeting);
-  app.post('/api/ethernet', EthernetController.create);
+  app.post('/api/ethernet', multer.single('image'), EthernetController.create);
   app.get('/api/ethernet', EthernetController.readAll);
   app.get('/api/ethernet/:id', EthernetController.readOne);
-  app.put('/api/ethernet/:id', EthernetController.update);
+  app.put('/api/ethernet/:id', multer.single('image'), EthernetController.update);
   app.delete('/api/ethernet/:id', EthernetController.delete);
 
   // * Wifi

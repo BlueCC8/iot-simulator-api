@@ -8,11 +8,15 @@ module.exports = {
     });
   },
   create(req, res, next) {
+    const url = `${req.protocol}://${req.get('host')}`;
     const etherProps = req.body;
+    etherProps.imagePath = `${url}/images/${req.file.filename}`;
+
     Ether.create(etherProps)
       .then(ether =>
         res.status(201).json({
-          etherId: ether._id
+          ether
+          // etherId: ether._id
         })
       )
       .catch(next); // next middleware in chain
@@ -35,14 +39,18 @@ module.exports = {
       .catch(next);
   },
   update(req, res, next) {
+    const url = `${req.protocol}://${req.get('host')}`;
     const etherId = req.params.id;
     const etherProps = req.body;
-
+    etherProps.imagePath = `${url}/images/${req.file.filename}`;
     Ether.findOneAndUpdate(
       {
         _id: etherId
       },
-      etherProps
+      etherProps,
+      {
+        useFindAndModify: false
+      }
     ).then(() => {
       Ether.findOne({
         _id: etherId

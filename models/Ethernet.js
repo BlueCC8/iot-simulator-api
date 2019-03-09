@@ -17,6 +17,9 @@ const EthernetSchema = new Schema({
     type: String,
     trim: true
   },
+  imagePath: {
+    type: String
+  },
   updated_date: {
     type: Date,
     default: Date.now
