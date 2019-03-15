@@ -1,9 +1,21 @@
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const User = require('../../models/User');
-// const { passport } = require('../../app');
 // Authentication Middleware
-
+const authMiddleWare = (req, res, next) =>
+  // console.log(req);
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    // console.log(req.headers);
+    // console.log(err);
+    // console.log(user);
+    if (info) {
+      next(info);
+    }
+    req.username = user.username;
+    next();
+  })(req, res, next);
 const loggedInOnly = (req, res, next) => {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req) {
     console.log('isAthenticated');
     next();
   } else
@@ -11,7 +23,15 @@ const loggedInOnly = (req, res, next) => {
       authenticated: false
     });
 };
-
+// const verifyToken = (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization.split(' ')[1];
+//     jwt.verify(token, 'hello_darkness');
+//     next();
+//   } catch (error) {
+//     res.status(401).json({ message: 'Auth failed!' });
+//   }
+// };
 const loggedOutOnly = (req, res, next) => {
   if (req.isUnauthenticated()) {
     console.log('notAthenticated');
@@ -25,26 +45,7 @@ const loggedOutOnly = (req, res, next) => {
 module.exports = {
   loggedInOnly,
   loggedOutOnly,
-  // renderIndex(req, res, next) {
-  //   console.log('render index');
-  //   // res.render("index", {
-  //   //   username: req.user.username
-  //   // })
-  //   res.status(200).send('Index redering...');
-  //   next();
-  // },
-  // renderLogin(req, res, next) {
-  //   console.log('try log in');
-  //   // res.render("login");
-  //   res.status(200).send('Login redering...');
-  //   next();
-  // },
-  // renderRegister(req, res, next) {
-  //   console.log('register get');
-  //   // res.render("register");
-  //   res.status(200).send('Register redering...');
-  //   next();
-  // },
+  authMiddleWare,
   register(req, res, next) {
     const { username, email, password } = req.body;
     User.create({
@@ -53,19 +54,20 @@ module.exports = {
       password
     })
       .then(user => {
-        req.login(user, err => {
+        req.login(user, { session: false }, err => {
           if (err) next(err);
           else
-            res.json({
+            res.status(201).json({
               message: 'Success register',
               authenticated: true
             });
         });
       })
       .catch(err => {
+        // console.log(err);
         if (err.name === 'ValidationError') {
-          res.json({
-            message: 'Username already exists',
+          res.status(409).json({
+            message: err,
             authenticated: false
           });
         } else next(err);
@@ -73,19 +75,33 @@ module.exports = {
   },
   logout(req, res, next) {
     req.logout();
-    res.json({
+    res.status(200).json({
       message: 'Success logout',
       authenticated: false
     });
     next();
+  },
+  authenticatePassport(req, res, next) {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+      if (err) {
+        next(err);
+      }
+      if (!user) {
+        res.status(401).json({
+          message: info,
+          authenticated: false
+        });
+      } else {
+        req.login(user, { session: false }, error => {
+          if (error) {
+            res.status(401).json(error);
+          }
+          const { username, password } = user;
+          const token = jwt.sign({ username, password }, process.env.JWT_KEY, { expiresIn: '1h' });
+
+          return res.json({ user, token, expiresIn: 3600 });
+        });
+      }
+    })(req, res, next);
   }
-  // ,
-  // authenticatePassport() {
-  //   passport.authenticate('local', (req, res) => {
-  //     res.json({
-  //       message: 'Success authentication',
-  //       authenticated: true
-  //     });
-  //   });
-  // }
 };

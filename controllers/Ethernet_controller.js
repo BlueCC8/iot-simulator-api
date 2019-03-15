@@ -10,13 +10,13 @@ module.exports = {
   create(req, res, next) {
     const url = `${req.protocol}://${req.get('host')}`;
     const etherProps = req.body;
+    etherProps.username = req.username;
     etherProps.imagePath = `${url}/images/${req.file.filename}`;
 
     Ether.create(etherProps)
       .then(ether =>
         res.status(201).json({
           ether
-          // etherId: ether._id
         })
       )
       .catch(next); // next middleware in chain
@@ -56,35 +56,47 @@ module.exports = {
     const url = `${req.protocol}://${req.get('host')}`;
     const etherId = req.params.id;
     const etherProps = req.body;
-    etherProps.imagePath = `${url}/images/${req.file.filename}`;
-    Ether.findOneAndUpdate(
+    const { username } = req;
+    if (req.file) {
+      etherProps.imagePath = `${url}/images/${req.file.filename}`;
+    } else {
+      etherProps.imagePath = null;
+    }
+    Ether.updateOne(
       {
-        _id: etherId
+        _id: etherId,
+        username
       },
       etherProps,
       {
         useFindAndModify: false
       }
-    ).then(() => {
-      Ether.findOne({
-        _id: etherId
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       })
-        .then(ether => {
-          res.status(200).json(ether);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
     const etherId = req.params.id;
     // const etherProps = req.body;
-
-    Ether.findOneAndDelete({
-      _id: etherId
+    const { username } = req;
+    Ether.deleteOne({
+      _id: etherId,
+      username
     })
-      .then(ether => res.status(204).send(ether))
-      // 204 stands for succes
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Delete successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
+      })
       .catch(next);
   }
 };

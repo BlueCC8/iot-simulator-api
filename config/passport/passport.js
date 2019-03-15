@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 const LocalStrategy = require('passport-local').Strategy;
+const passportJWT = require('passport-jwt');
 
+const ExtractJWT = passportJWT.ExtractJwt;
+const JWTStrategy = passportJWT.Strategy;
 const User = require('../../models/User');
 
 module.exports = passport => {
@@ -27,7 +30,9 @@ module.exports = passport => {
           });
         } else {
           console.log('done user');
-          done(null, user);
+          done(null, user, {
+            message: 'Logged In Successfully'
+          });
         }
       })
       .catch(e => {
@@ -36,5 +41,26 @@ module.exports = passport => {
         done(e);
       });
   });
+
+  passport.use(
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: process.env.JWT_KEY
+      },
+      (jwtPayload, cb) => {
+        // console.log(jwtPayload);
+        // find the user in db if needed
+        return User.findOne(jwtPayload.id)
+          .then(user => {
+            console.log(user);
+            return cb(null, user);
+          })
+          .catch(err => {
+            return cb(err);
+          });
+      }
+    )
+  );
   passport.use('local', local);
 };

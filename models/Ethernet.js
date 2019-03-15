@@ -20,6 +20,10 @@ const EthernetSchema = new Schema({
   imagePath: {
     type: String
   },
+  username: {
+    type: String,
+    ref: 'Users'
+  },
   updated_date: {
     type: Date,
     default: Date.now

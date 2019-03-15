@@ -1,15 +1,14 @@
 const assert = require('assert');
-const request = require("supertest");
-const app = require("../app");
-describe("The express app", () => {
+const request = require('supertest');
+const app = require('../app');
 
-    it("handles a GET request to /API", (done) => {
-        request(app) //fake request with supertest
-            .get('/api')
-            .end((err, response) => {
-                assert(response.body.hi === "there");
-                done();
-            })
-    })
-
+describe('The express app', () => {
+  it('handles a GET request to /API', done => {
+    request(app) // fake request with supertest
+      .get('/api')
+      .end((err, response) => {
+        assert(response.body.hi === 'there');
+        done();
+      });
+  });
 });

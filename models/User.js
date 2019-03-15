@@ -28,6 +28,7 @@ const UserSchema = new Schema({
   email: {
     type: String,
     trim: true,
+    unique: true,
     validate: emailValidator
   },
   passwordHash: {

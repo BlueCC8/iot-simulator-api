@@ -14,8 +14,9 @@ const PopulateSubdocuments = require('../populate/populate_subdocuments');
 
 const PassportController = require('../config/passport/passport_controller');
 // * Passport middleware
-const { loggedInOnly } = PassportController;
-const { loggedOutOnly } = PassportController;
+// const { loggedOutOnly } = PassportController;
+// const { loggedInOnly } = PassportController;
+// const { verifyToken } = PassportController;
 const multer = require('../config/multer/multer');
 
 module.exports = app => {
@@ -31,11 +32,11 @@ module.exports = app => {
   // app.get('/signup', loggedOutOnly, PassportController.renderRegister);
 
   // * Register Handler
-  app.post('/signup', PassportController.register);
+  app.post('/api/user/signup', PassportController.register);
 
   // * Logout Handler
-  app.all('/logout', PassportController.logout);
-
+  app.all('/api/user/logout', PassportController.logout);
+  app.post('/api/user/login', PassportController.authenticatePassport);
   // ! Populate all database
   app.get('/api/populate/insert_all', PopulateAll.insertData);
 
@@ -47,11 +48,21 @@ module.exports = app => {
 
   // * Ethernet
   app.get('/api/ethernet/greet', EthernetController.greeting);
-  app.post('/api/ethernet', multer.single('image'), EthernetController.create);
+  app.post(
+    '/api/ethernet',
+    PassportController.authMiddleWare,
+    multer.single('image'),
+    EthernetController.create
+  );
   app.get('/api/ethernet', EthernetController.readAll);
   app.get('/api/ethernet/:id', EthernetController.readOne);
-  app.put('/api/ethernet/:id', multer.single('image'), EthernetController.update);
-  app.delete('/api/ethernet/:id', EthernetController.delete);
+  app.put(
+    '/api/ethernet/:id',
+    PassportController.authMiddleWare,
+    multer.single('image'),
+    EthernetController.update
+  );
+  app.delete('/api/ethernet/:id', PassportController.authMiddleWare, EthernetController.delete);
 
   // * Wifi
   app.get('/api/wifi/greet', WifiController.greeting);
@@ -119,7 +130,7 @@ module.exports = app => {
 
   // * User
   app.get('/api/user/greet', UserController.greeting);
-  app.post('/api/user', UserController.create);
+  // app.post('/api/user', UserController.create);
   app.get('/api/user/', UserController.readAll);
   app.get('/api/user/:id', UserController.readOne);
   app.put('/api/user/:id', UserController.update);
