@@ -15,7 +15,7 @@ Make sure you have installed:
 * Run ```npm install``` 
 * If you run locally run the mongodb first using the command ```mongod``` and 
 make sure to use the right connection string ```mongoose.connect("mongodb://localhost/iot-simulator")```
-* Create a file nodemon.json specifying environment variables as follows
+* Fill the file nodemon.json your environment variables as follows
 ```
 {
  "env": {
