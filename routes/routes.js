@@ -132,7 +132,7 @@ module.exports = app => {
   app.get('/api/user/greet', UserController.greeting);
   // app.post('/api/user', UserController.create);
   app.get('/api/user/', UserController.readAll);
-  app.get('/api/user/:id', UserController.readOne);
-  app.put('/api/user/:id', UserController.update);
+  app.get('/api/user/:username', PassportController.authMiddleWare, UserController.readOne);
+  app.put('/api/user/:username', UserController.update);
   app.delete('/api/user/:id', UserController.delete);
 };

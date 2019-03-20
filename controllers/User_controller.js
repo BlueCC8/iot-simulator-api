@@ -25,9 +25,11 @@ module.exports = {
       .catch(next);
   },
   readOne(req, res, next) {
-    const userId = req.params.id;
+    // const userId = req.params.id;
+    const { username } = req.params;
     User.findOne({
-      _id: userId
+      // _id: userId,
+      username
     })
       .then(user => {
         res.status(200).json(user);
@@ -36,23 +38,25 @@ module.exports = {
   },
 
   update(req, res, next) {
-    const userId = req.params.id;
+    const { username } = req.params;
     const userProps = req.body;
-
-    User.findOneAndUpdate(
+    User.updateOne(
       {
-        _id: userId
+        username
       },
-      userProps
-    ).then(() => {
-      User.findOne({
-        _id: userId
+      userProps,
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       })
-        .then(user => {
-          res.status(200).json(user);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
