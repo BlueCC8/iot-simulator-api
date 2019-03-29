@@ -8,19 +8,37 @@ module.exports = {
     });
   },
   create(req, res, next) {
+    const url = `${req.protocol}://${req.get('host')}`;
     const deviceProps = req.body;
+    deviceProps.username = req.username;
+    deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
+
     Device.create(deviceProps)
       .then(device =>
         res.status(201).json({
-          deviceId: device._id
+          device
         })
       )
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    Device.find({})
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = Device.find();
+    let fetchedDevices;
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
       .then(devices => {
-        res.status(200).json(devices);
+        fetchedDevices = devices;
+        return Device.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          devices: fetchedDevices,
+          maxDevices: count
+        });
       })
       .catch(next);
   },
@@ -36,33 +54,50 @@ module.exports = {
   },
 
   update(req, res, next) {
+    const url = `${req.protocol}://${req.get('host')}`;
     const deviceId = req.params.id;
     const deviceProps = req.body;
-
-    Device.findOneAndUpdate(
+    const { username } = req;
+    if (req.file) {
+      deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
+    } else {
+      deviceProps.imagePath = null;
+    }
+    Device.updateOne(
       {
-        _id: deviceId
+        _id: deviceId,
+        username
       },
-      deviceProps
-    ).then(() => {
-      Device.findById({
-        _id: deviceId
+      deviceProps,
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       })
-        .then(device => {
-          res.status(200).json(device);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
     const deviceId = req.params.id;
     // const deviceProps = req.body;
-
-    Device.findOneAndDelete({
-      _id: deviceId
+    const { username } = req;
+    Device.deleteOne({
+      _id: deviceId,
+      username
     })
-      .then(device => res.status(204).send(device))
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Delete successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
+      })
       .catch(next);
   }
 };

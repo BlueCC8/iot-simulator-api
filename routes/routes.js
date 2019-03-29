@@ -20,17 +20,6 @@ const PassportController = require('../config/passport/passport_controller');
 const multer = require('../config/multer/multer');
 
 module.exports = app => {
-  // ! Login
-
-  // * Main Page
-  // app.get('/', loggedInOnly, PassportController.renderIndex);
-
-  // // Login View
-  // app.get('/login', loggedOutOnly, PassportController.renderLogin);
-
-  // // * Register View
-  // app.get('/signup', loggedOutOnly, PassportController.renderRegister);
-
   // * Register Handler
   app.post('/api/user/signup', PassportController.register);
 
@@ -106,11 +95,21 @@ module.exports = app => {
 
   // * Device
   app.get('/api/device/greet', DeviceController.greeting);
-  app.post('/api/device', DeviceController.create);
+  app.post(
+    '/api/device',
+    PassportController.authMiddleWare,
+    multer.single('image'),
+    DeviceController.create
+  );
   app.get('/api/device', DeviceController.readAll);
   app.get('/api/device/:id', DeviceController.readOne);
-  app.put('/api/device/:id', DeviceController.update);
-  app.delete('/api/device/:id', DeviceController.delete);
+  app.put(
+    '/api/device/:id',
+    PassportController.authMiddleWare,
+    multer.single('image'),
+    DeviceController.update
+  );
+  app.delete('/api/device/:id', PassportController.authMiddleWare, DeviceController.delete);
 
   // * ConfigDevice
   app.get('/api/conf_device/greet', ConfigDeviceController.greeting);
