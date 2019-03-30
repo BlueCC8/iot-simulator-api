@@ -24,10 +24,34 @@ module.exports = {
   readAll(req, res, next) {
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.page;
+    const isPopulated = req.query.populated;
     const query = Device.find();
+
     let fetchedDevices;
     if (pageSize && currentPage) {
       query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    if (isPopulated) {
+      query
+        .populate({
+          path: 'appLayerID',
+          model: 'ApplicationLayer'
+        })
+        .populate({
+          path: 'netLayerID',
+          model: 'NetworkLayer'
+        })
+        .populate({
+          path: 'linLayerID',
+          model: 'LinkLayer',
+          populate: [
+            { path: 'llWifiID', model: 'Wifi' },
+            {
+              path: 'llEthernetID',
+              model: 'Ethernet'
+            }
+          ]
+        });
     }
     query
       .then(devices => {
