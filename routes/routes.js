@@ -113,11 +113,15 @@ module.exports = app => {
 
   // * ConfigDevice
   app.get('/api/conf_device/greet', ConfigDeviceController.greeting);
-  app.post('/api/conf_device', ConfigDeviceController.create);
+  app.post('/api/conf_device', PassportController.authMiddleWare, ConfigDeviceController.create);
   app.get('/api/conf_device', ConfigDeviceController.readAll);
   app.get('/api/conf_device/:id', ConfigDeviceController.readOne);
-  app.put('/api/conf_device/:id', ConfigDeviceController.update);
-  app.delete('/api/conf_device/:id', ConfigDeviceController.delete);
+  app.put('/api/conf_device/:id', PassportController.authMiddleWare, ConfigDeviceController.update);
+  app.delete(
+    '/api/conf_device/:id',
+    PassportController.authMiddleWare,
+    ConfigDeviceController.delete
+  );
 
   // * Room
   app.get('/api/room/greet', RoomController.greeting);

@@ -9,6 +9,7 @@ module.exports = {
   },
   create(req, res, next) {
     const configDevProps = req.body;
+    configDevProps.username = req.username;
     ConfigDevice.create(configDevProps)
       .then(configDev =>
         res.status(201).json({
@@ -18,9 +19,35 @@ module.exports = {
       .catch(next);
   },
   readAll(req, res, next) {
-    ConfigDevice.find({})
-      .then(configDevs => {
-        res.status(200).json(configDevs);
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = ConfigDevice.find();
+    let isPopulated;
+    let checkPopulated = req.query.populated;
+    let fetchedConfigs;
+
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    if (checkPopulated) {
+      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
+    }
+    if (isPopulated) {
+      query.populate({
+        path: 'devIDs',
+        model: 'Device'
+      });
+    }
+    query
+      .then(configs => {
+        fetchedConfigs = configs;
+        return ConfigDevice.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          configs: fetchedConfigs,
+          maxConfigs: count
+        });
       })
       .catch(next);
   },
@@ -38,32 +65,43 @@ module.exports = {
   update(req, res, next) {
     const configDevId = req.params.id;
     const configDevProps = req.body;
+    const { username } = req;
 
-    ConfigDevice.findOneAndUpdate(
+    ConfigDevice.updateOne(
       {
-        _id: configDevId
+        _id: configDevId,
+        username
       },
-      configDevProps
-    ).then(() => {
-      ConfigDevice.findOne({
-        _id: configDevId
+      configDevProps,
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       })
-        .then(configDev => {
-          res.status(200).json(configDev);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
     const configDevId = req.params.id;
     // const configDevProps = req.body;
-
-    ConfigDevice.findOneAndDelete({
-      _id: configDevId
+    const { username } = req;
+    ConfigDevice.deleteOne({
+      _id: configDevId,
+      username
     })
-      .then(configDev => res.status(204).send(configDev))
-      // * 204 stands for succes
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Delete successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
+      })
       .catch(next);
   }
 };

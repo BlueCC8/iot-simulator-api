@@ -24,12 +24,16 @@ module.exports = {
   readAll(req, res, next) {
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.page;
-    const isPopulated = req.query.populated;
     const query = Device.find();
+    let isPopulated;
+    let checkPopulated = req.query.populated;
 
     let fetchedDevices;
     if (pageSize && currentPage) {
       query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    if (checkPopulated) {
+      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
     }
     if (isPopulated) {
       query

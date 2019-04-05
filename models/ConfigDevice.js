@@ -15,6 +15,10 @@ const ConfigDeviceSchema = new Schema({
       ref: 'Device'
     }
   ],
+  username: {
+    type: String,
+    ref: 'Users'
+  },
   updated_date: {
     type: Date,
     default: Date.now

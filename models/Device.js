@@ -45,6 +45,10 @@ const DeviceSchema = new Schema({
     min: 0,
     validate: currencyValidator
   },
+  username: {
+    type: String,
+    ref: 'Users'
+  },
   devImgUrl: {
     type: String,
     trim: true,
