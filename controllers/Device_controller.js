@@ -11,8 +11,9 @@ module.exports = {
     const url = `${req.protocol}://${req.get('host')}`;
     const deviceProps = req.body;
     deviceProps.username = req.username;
-    deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
-
+    if (req.file) {
+      deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
+    }
     Device.create(deviceProps)
       .then(device =>
         res.status(201).json({
