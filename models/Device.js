@@ -28,8 +28,7 @@ const DeviceSchema = new Schema({
   },
   tranLayer: {
     type: String,
-    trim: true,
-    enum: ['TCP', 'UDP']
+    trim: true
   },
   netLayerID: {
     type: Schema.Types.ObjectId,

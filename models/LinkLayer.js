@@ -41,8 +41,7 @@ const LinkLayerSchema = new Schema({
   },
   llCelullar: {
     type: String,
-    trim: true,
-    enum: []
+    trim: true
   },
   llNFC: Boolean,
   llProducer: {

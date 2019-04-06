@@ -14,8 +14,8 @@ const NetworkLayerSchema = new Schema({
   //! it's either Zigbee or 6LoWpan protocol activated (should be boolean)
   nlZig_LoWpan: {
     type: String,
-    trim: true,
-    enum: ['Zigbee', '6LoWpan']
+    trim: true
+    // enum: ['Zigbee', '6LoWpan']
   },
   updated_date: {
     type: Date,
