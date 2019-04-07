@@ -56,7 +56,7 @@ module.exports = {
     const url = `${req.protocol}://${req.get('host')}`;
     const etherId = req.params.id;
     const etherProps = req.body;
-    const { username } = req;
+    // const { username } = req;
     if (req.file) {
       etherProps.imagePath = `${url}/images/${req.file.filename}`;
     } else {
@@ -64,8 +64,8 @@ module.exports = {
     }
     Ether.updateOne(
       {
-        _id: etherId,
-        username
+        _id: etherId
+        // username
       },
       etherProps,
       {

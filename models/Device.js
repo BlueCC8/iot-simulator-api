@@ -48,6 +48,10 @@ const DeviceSchema = new Schema({
     type: String,
     ref: 'Users'
   },
+  devProducer: {
+    type: String,
+    trim: true
+  },
   devImgUrl: {
     type: String,
     trim: true,

@@ -37,21 +37,11 @@ module.exports = app => {
 
   // * Ethernet
   app.get('/api/ethernet/greet', EthernetController.greeting);
-  app.post(
-    '/api/ethernet',
-    PassportController.authMiddleWare,
-    multer.single('image'),
-    EthernetController.create
-  );
+  app.post('/api/ethernet', multer.single('image'), EthernetController.create);
   app.get('/api/ethernet', EthernetController.readAll);
   app.get('/api/ethernet/:id', EthernetController.readOne);
-  app.put(
-    '/api/ethernet/:id',
-    PassportController.authMiddleWare,
-    multer.single('image'),
-    EthernetController.update
-  );
-  app.delete('/api/ethernet/:id', PassportController.authMiddleWare, EthernetController.delete);
+  app.put('/api/ethernet/:id', multer.single('image'), EthernetController.update);
+  app.delete('/api/ethernet/:id', EthernetController.delete);
 
   // * Wifi
   app.get('/api/wifi/greet', WifiController.greeting);
@@ -98,7 +88,7 @@ module.exports = app => {
   app.post(
     '/api/device',
     PassportController.authMiddleWare,
-    multer.single('image'),
+    multer.single('devImgUrl'),
     DeviceController.create
   );
   app.get('/api/device', DeviceController.readAll);
@@ -106,7 +96,7 @@ module.exports = app => {
   app.put(
     '/api/device/:id',
     PassportController.authMiddleWare,
-    multer.single('image'),
+    multer.single('devImgUrl'),
     DeviceController.update
   );
   app.delete('/api/device/:id', PassportController.authMiddleWare, DeviceController.delete);

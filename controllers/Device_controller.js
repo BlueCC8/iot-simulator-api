@@ -12,7 +12,7 @@ module.exports = {
     const deviceProps = req.body;
     deviceProps.username = req.username;
     if (req.file) {
-      deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
+      deviceProps.devImgUrl = `${url}/images/devices/${req.file.filename}`;
     }
     Device.create(deviceProps)
       .then(device =>
@@ -73,9 +73,37 @@ module.exports = {
   },
   readOne(req, res, next) {
     const deviceId = req.params.id;
-    Device.findOne({
+    let isPopulated;
+    let checkPopulated = req.query.populated;
+    const query = Device.findOne({
       _id: deviceId
-    })
+    });
+    if (checkPopulated) {
+      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
+    }
+    if (isPopulated) {
+      query
+        .populate({
+          path: 'appLayerID',
+          model: 'ApplicationLayer'
+        })
+        .populate({
+          path: 'netLayerID',
+          model: 'NetworkLayer'
+        })
+        .populate({
+          path: 'linLayerID',
+          model: 'LinkLayer',
+          populate: [
+            { path: 'llWifiID', model: 'Wifi' },
+            {
+              path: 'llEthernetID',
+              model: 'Ethernet'
+            }
+          ]
+        });
+    }
+    query
       .then(device => {
         res.status(200).json(device);
       })
