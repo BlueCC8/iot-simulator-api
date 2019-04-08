@@ -12,7 +12,7 @@ module.exports = {
     const deviceProps = req.body;
     deviceProps.username = req.username;
     if (req.file) {
-      deviceProps.devImgUrl = `${url}/images/devices/${req.file.filename}`;
+      deviceProps.devImgUrl = `${url}/images/${req.file.filename}`;
     }
     Device.create(deviceProps)
       .then(device =>
@@ -116,9 +116,9 @@ module.exports = {
     const deviceProps = req.body;
     const { username } = req;
     if (req.file) {
-      deviceProps.imagePath = `${url}/images/devices/${req.file.filename}`;
+      deviceProps.devImgUrl = `${url}/images/${req.file.filename}`;
     } else {
-      deviceProps.imagePath = null;
+      deviceProps.devImgUrl = null;
     }
     Device.updateOne(
       {

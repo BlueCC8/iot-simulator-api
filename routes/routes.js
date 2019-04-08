@@ -88,7 +88,7 @@ module.exports = app => {
   app.post(
     '/api/device',
     PassportController.authMiddleWare,
-    multer.single('devImgUrl'),
+    multer.single('image'),
     DeviceController.create
   );
   app.get('/api/device', DeviceController.readAll);
@@ -96,7 +96,7 @@ module.exports = app => {
   app.put(
     '/api/device/:id',
     PassportController.authMiddleWare,
-    multer.single('devImgUrl'),
+    multer.single('image'),
     DeviceController.update
   );
   app.delete('/api/device/:id', PassportController.authMiddleWare, DeviceController.delete);
