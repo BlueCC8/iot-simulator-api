@@ -115,9 +115,10 @@ module.exports = {
     const deviceId = req.params.id;
     const deviceProps = req.body;
     const { username } = req;
-    if (req.file) {
+    const isOldImage = deviceProps.devImgUrl;
+    if (req.file && !isOldImage) {
       deviceProps.devImgUrl = `${url}/images/${req.file.filename}`;
-    } else {
+    } else if (!isOldImage) {
       deviceProps.devImgUrl = null;
     }
     Device.updateOne(
