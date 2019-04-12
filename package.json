@@ -4,6 +4,7 @@
   "description": "api for the iot simulator",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint \"./**/*.js\"",
     "start": "nodemon node index.js",
     "test": "SET NODE_ENV=test | nodemon --exec mocha --recursive"
   },
