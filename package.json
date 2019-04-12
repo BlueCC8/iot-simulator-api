@@ -8,6 +8,10 @@
     "start": "nodemon node index.js",
     "test": "SET NODE_ENV=test | nodemon --exec mocha --recursive"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueCC8/iot-simulator-api"
+  },
   "author": "BlueCC",
   "license": "MIT",
   "dependencies": {
