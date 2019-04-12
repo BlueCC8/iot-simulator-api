@@ -1,5 +1,5 @@
 # Project Title
-
+## [![Build Status](https://travis-ci.com/BlueCC8/iot-simulator-ng.svg?token=wimezKrCqyRNdiZF2Tdi&branch=master)](https://travis-ci.com/BlueCC8/iot-simulator-api)  [![Known Vulnerabilities](https://snyk.io/test/github/BlueCC8/iot-simulator-api/badge.svg)](https://snyk.io/test/github/BlueCC8/iot-simulator-api)
 API made for the IoT Simulator APP in order to get and receive different types of requests
 
 ![databseModel](readmeImages/Mockup.jpg)
