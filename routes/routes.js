@@ -14,9 +14,6 @@ const PopulateSubdocuments = require('../populate/populate_subdocuments');
 
 const PassportController = require('../config/passport/passport_controller');
 // * Passport middleware
-// const { loggedOutOnly } = PassportController;
-// const { loggedInOnly } = PassportController;
-// const { verifyToken } = PassportController;
 const multer = require('../config/multer/multer');
 
 module.exports = app => {
@@ -26,9 +23,9 @@ module.exports = app => {
   // * Logout Handler
   app.all('/api/user/logout', PassportController.logout);
   app.post('/api/user/login', PassportController.authenticatePassport);
+
   // ! Populate all database
   app.get('/api/populate/insert_all', PopulateAll.insertData);
-
   app.get('/api/populate/populateLinkLayer', PopulateSubdocuments.populateLinkLayer);
   app.get('/api/populate/populateDevice', PopulateSubdocuments.populateDevice);
   app.get('/api/populate/populateConfigDevice', PopulateSubdocuments.populateConfigDevice);

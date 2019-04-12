@@ -30,6 +30,7 @@ module.exports = {
     let checkPopulated = req.query.populated;
 
     let fetchedDevices;
+
     if (pageSize && currentPage) {
       query.skip(pageSize * (currentPage - 1)).limit(pageSize);
     }
@@ -121,6 +122,7 @@ module.exports = {
     } else if (!isOldImage) {
       deviceProps.devImgUrl = null;
     }
+    console.log(deviceProps);
     Device.updateOne(
       {
         _id: deviceId,
