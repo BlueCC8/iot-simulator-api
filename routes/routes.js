@@ -9,7 +9,7 @@ const ConfigDeviceController = require('../controllers/ConfigDevice_controller')
 const RoomController = require('../controllers/Room_controller');
 const UserController = require('../controllers/User_controller');
 
-const PopulateAll = require('../populate/insert_all');
+// const PopulateAll = require('../populate/insert_all');
 const PopulateSubdocuments = require('../populate/populate_subdocuments');
 
 const PassportController = require('../config/passport/passport_controller');
@@ -25,7 +25,7 @@ module.exports = app => {
   app.post('/api/user/login', PassportController.authenticatePassport);
 
   // ! Populate all database
-  app.get('/api/populate/insert_all', PopulateAll.insertData);
+  // app.get('/api/populate/insert_all', PopulateAll.insertData);
   app.get('/api/populate/populateLinkLayer', PopulateSubdocuments.populateLinkLayer);
   app.get('/api/populate/populateDevice', PopulateSubdocuments.populateDevice);
   app.get('/api/populate/populateConfigDevice', PopulateSubdocuments.populateConfigDevice);
