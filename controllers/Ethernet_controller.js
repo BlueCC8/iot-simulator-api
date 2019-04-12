@@ -11,8 +11,9 @@ module.exports = {
     const url = `${req.protocol}://${req.get('host')}`;
     const etherProps = req.body;
     etherProps.username = req.username;
-    etherProps.imagePath = `${url}/images/${req.file.filename}`;
-
+    if (req.file) {
+      etherProps.imagePath = `${url}/images/${req.file.filename}`;
+    }
     Ether.create(etherProps)
       .then(ether =>
         res.status(201).json({

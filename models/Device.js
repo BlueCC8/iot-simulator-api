@@ -54,8 +54,7 @@ const DeviceSchema = new Schema({
   },
   devImgUrl: {
     type: String,
-    trim: true,
-    validate: urlValidator
+    trim: true
   },
   updated_date: {
     type: Date,
