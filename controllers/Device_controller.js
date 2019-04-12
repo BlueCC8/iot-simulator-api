@@ -27,7 +27,7 @@ module.exports = {
     const currentPage = +req.query.page;
     const query = Device.find();
     let isPopulated;
-    let checkPopulated = req.query.populated;
+    const checkPopulated = req.query.populated;
 
     let fetchedDevices;
 
@@ -35,7 +35,7 @@ module.exports = {
       query.skip(pageSize * (currentPage - 1)).limit(pageSize);
     }
     if (checkPopulated) {
-      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
+      isPopulated = checkPopulated.toLowerCase() === 'true';
     }
     if (isPopulated) {
       query
@@ -75,12 +75,12 @@ module.exports = {
   readOne(req, res, next) {
     const deviceId = req.params.id;
     let isPopulated;
-    let checkPopulated = req.query.populated;
+    const checkPopulated = req.query.populated;
     const query = Device.findOne({
       _id: deviceId
     });
     if (checkPopulated) {
-      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
+      isPopulated = checkPopulated.toLowerCase() === 'true';
     }
     if (isPopulated) {
       query

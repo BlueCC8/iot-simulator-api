@@ -3,11 +3,11 @@ const request = require('supertest');
 const app = require('../app');
 
 describe('The express app', () => {
-  it('handles a GET request to /API', done => {
+  it('handles a GET request to /API/ethernet', done => {
     request(app) // fake request with supertest
-      .get('/api')
+      .get('/api/ethernet/greet')
       .end((err, response) => {
-        assert(response.body.hi === 'there');
+        assert(response.body.hi === 'Ethernet greets you');
         done();
       });
   });
