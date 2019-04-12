@@ -81,3 +81,5 @@ typings/
 
 #Nodemon env variables
 nodemon.json
+
+images/
