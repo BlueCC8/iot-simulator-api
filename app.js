@@ -19,8 +19,8 @@ if (process.env.NODE_ENV !== 'test') {
   // * Connects to the remote databse
   mongoose
     .connect(
-      `mongodb+srv://airfor:${
-        process.env.MONGO_ATLAS_PW
+      `mongodb+srv://AdrianMoore:${
+        process.env.MONGO_ATLAS_TEST_PW
       }@iot-simulator-og9ll.mongodb.net/api_iot?retryWrites=true`,
       {
         useNewUrlParser: true

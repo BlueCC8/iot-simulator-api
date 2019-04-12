@@ -9,12 +9,12 @@ const currencyValidator = [
     message: 'Invalid currency'
   })
 ];
-const urlValidator = [
-  validate({
-    validator: 'isURL',
-    message: 'Invalid URL'
-  })
-];
+// const urlValidator = [
+//   validate({
+//     validator: 'isURL',
+//     message: 'Invalid URL'
+//   })
+// ];
 const DeviceSchema = new Schema({
   devName: {
     type: String,

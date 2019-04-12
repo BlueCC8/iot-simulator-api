@@ -23,14 +23,14 @@ module.exports = {
     const currentPage = +req.query.page;
     const query = ConfigDevice.find();
     let isPopulated;
-    let checkPopulated = req.query.populated;
+    const checkPopulated = req.query.populated;
     let fetchedConfigs;
 
     if (pageSize && currentPage) {
       query.skip(pageSize * (currentPage - 1)).limit(pageSize);
     }
     if (checkPopulated) {
-      isPopulated = checkPopulated.toLowerCase() == 'true' ? true : false;
+      isPopulated = checkPopulated.toLowerCase() === 'true';
     }
     if (isPopulated) {
       query.populate({
