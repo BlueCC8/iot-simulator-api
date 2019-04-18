@@ -18,9 +18,35 @@ module.exports = {
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    Room.find({})
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = Room.find();
+    let isPopulated;
+    const checkPopulated = req.query.populated;
+    let fetchedRooms;
+
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    if (checkPopulated) {
+      isPopulated = checkPopulated.toLowerCase() === 'true';
+    }
+    if (isPopulated) {
+      query.populate({
+        path: 'polID',
+        model: 'Polygon'
+      });
+    }
+    query
       .then(rooms => {
-        res.status(200).json(rooms);
+        fetchedRooms = rooms;
+        return Room.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          rooms: fetchedRooms,
+          maxRooms: count
+        });
       })
       .catch(next);
   },
@@ -38,32 +64,43 @@ module.exports = {
   update(req, res, next) {
     const roomId = req.params.id;
     const roomProps = req.body;
+    const { username } = req;
 
-    Room.findByIdAndUpdate(
+    Room.updateOne(
       {
-        _id: roomId
+        _id: roomId,
+        username
       },
-      roomProps
-    ).then(() => {
-      Room.findById({
-        _id: roomId
+      roomProps,
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
       })
-        .then(room => {
-          res.status(200).json(room);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
     const roomId = req.params.id;
-    // const roomProps = req.body;
+    const { username } = req;
 
-    Room.findByIdAndRemove({
-      _id: roomId
+    Room.deleteOne({
+      _id: roomId,
+      username
     })
-      .then(room => res.status(204).send(room))
-      // * 204 stands for succes
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Delete successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
+      })
       .catch(next);
   }
 };

@@ -28,6 +28,10 @@ const RoomSchema = new Schema({
       trim: true
     }
   ],
+  username: {
+    type: String,
+    ref: 'Users'
+  },
   updated_date: {
     type: Date,
     default: Date.now

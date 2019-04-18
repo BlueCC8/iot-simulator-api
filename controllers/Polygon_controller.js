@@ -18,9 +18,24 @@ module.exports = {
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    Polygon.find({})
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = Polygon.find();
+    let fetchedPolygons;
+
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
       .then(polygon => {
-        res.status(200).json(polygon);
+        fetchedPolygons = polygon;
+        return Polygon.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          polygon: fetchedPolygons,
+          maxPolygons: count
+        });
       })
       .catch(next);
   },
@@ -39,31 +54,39 @@ module.exports = {
     const polygonId = req.params.id;
     const polygonProps = req.body;
 
-    Polygon.findOneAndUpdate(
+    Polygon.updateOne(
       {
         _id: polygonId
       },
-      polygonProps
-    ).then(() => {
-      Polygon.findOne({
-        _id: polygonId
+      polygonProps,
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Update successful' });
+        } else {
+          res.status(401).json({ message: 'Unknown error' });
+        }
       })
-        .then(polygon => {
-          res.status(200).json(polygon);
-        })
-        .catch(next);
-    });
+      .catch(next);
   },
 
   delete(req, res, next) {
     const polygonId = req.params.id;
     // const polygonProps = req.body;
 
-    Polygon.findOneAndDelete({
+    Polygon.deleteOne({
       _id: polygonId
     })
-      .then(polygon => res.status(204).send(polygon))
-      // 204 stands for succes
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Delete successful' });
+        } else {
+          res.status(401).json({ message: 'Unknown error' });
+        }
+      })
       .catch(next);
   }
 };

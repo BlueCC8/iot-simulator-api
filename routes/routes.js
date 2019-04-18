@@ -112,11 +112,11 @@ module.exports = app => {
 
   // * Room
   app.get('/api/room/greet', RoomController.greeting);
-  app.post('/api/room', RoomController.create);
+  app.post('/api/room', PassportController.authMiddleWare, RoomController.create);
   app.get('/api/room', RoomController.readAll);
   app.get('/api/room/:id', RoomController.readOne);
-  app.put('/api/room/:id', RoomController.update);
-  app.delete('/api/room/:id', RoomController.delete);
+  app.put('/api/room/:id', PassportController.authMiddleWare, RoomController.update);
+  app.delete('/api/room/:id', PassportController.authMiddleWare, RoomController.delete);
 
   // * User
   app.get('/api/user/greet', UserController.greeting);
