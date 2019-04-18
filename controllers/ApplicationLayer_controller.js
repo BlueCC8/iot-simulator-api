@@ -18,9 +18,23 @@ module.exports = {
       .catch(next);
   },
   readAll(req, res, next) {
-    AppLayer.find({})
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = AppLayer.find();
+    let fetchedAppLayers;
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
       .then(appLayers => {
-        res.status(200).json(appLayers);
+        fetchedAppLayers = appLayers;
+        return AppLayer.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          appLayers: fetchedAppLayers,
+          maxAppLayers: count
+        });
       })
       .catch(next);
   },

@@ -18,9 +18,23 @@ module.exports = {
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    LinkLayer.find({})
-      .then(linkLayer => {
-        res.status(200).json(linkLayer);
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = LinkLayer.find();
+    let fetchedLinkLayers;
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
+      .then(linkLayers => {
+        fetchedLinkLayers = linkLayers;
+        return LinkLayer.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          linkLayers: fetchedLinkLayers,
+          maxLinkLayers: count
+        });
       })
       .catch(next);
   },

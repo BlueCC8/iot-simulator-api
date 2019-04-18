@@ -122,7 +122,6 @@ module.exports = {
     } else if (!isOldImage) {
       deviceProps.devImgUrl = null;
     }
-    console.log(deviceProps);
     Device.updateOne(
       {
         _id: deviceId,

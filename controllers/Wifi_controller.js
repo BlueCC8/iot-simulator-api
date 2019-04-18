@@ -18,9 +18,23 @@ module.exports = {
       .catch(next); // next middleware in chain
   },
   readAll(req, res, next) {
-    Wifi.find({})
-      .then(wifi => {
-        res.status(200).json(wifi);
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const query = Wifi.find();
+    let fetchedWifis;
+    if (pageSize && currentPage) {
+      query.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+    query
+      .then(wifis => {
+        fetchedWifis = wifis;
+        return Wifi.countDocuments();
+      })
+      .then(count => {
+        res.status(200).json({
+          wifis: fetchedWifis,
+          maxWifis: count
+        });
       })
       .catch(next);
   },
