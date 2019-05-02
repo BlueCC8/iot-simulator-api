@@ -21,7 +21,17 @@ module.exports = {
   readAll(req, res, next) {
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.page;
-    const query = ConfigDevice.find();
+    const { ids } = req.query;
+    let query = '';
+    if (ids) {
+      query = ConfigDevice.find({
+        _id: {
+          $in: ids
+        }
+      });
+    } else {
+      query = ConfigDevice.find();
+    }
     let isPopulated;
     const checkPopulated = req.query.populated;
     let fetchedConfigs;
@@ -41,6 +51,10 @@ module.exports = {
     query
       .then(configs => {
         fetchedConfigs = configs;
+
+        if (ids) {
+          return fetchedConfigs.length;
+        }
         return ConfigDevice.countDocuments();
       })
       .then(count => {
