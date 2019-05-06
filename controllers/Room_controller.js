@@ -32,10 +32,15 @@ module.exports = {
       isPopulated = checkPopulated.toLowerCase() === 'true';
     }
     if (isPopulated) {
-      query.populate({
-        path: 'polID',
-        model: 'Polygon'
-      });
+      query
+        .populate({
+          path: 'polID',
+          model: 'Polygon'
+        })
+        .populate({
+          path: 'configDevIDs',
+          model: 'ConfigDevice'
+        });
     }
     query
       .then(rooms => {
