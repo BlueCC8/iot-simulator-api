@@ -33,7 +33,7 @@ module.exports = {
       })
       .then(count => {
         res.status(200).json({
-          polygon: fetchedPolygons,
+          polygons: fetchedPolygons,
           maxPolygons: count
         });
       })
