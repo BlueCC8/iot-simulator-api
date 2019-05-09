@@ -9,6 +9,7 @@ module.exports = {
   },
   create(req, res, next) {
     const roomProps = req.body;
+    roomProps.username = req.username;
     Room.create(roomProps)
       .then(room =>
         res.status(201).json({
