@@ -9,6 +9,7 @@ module.exports = {
   },
   create(req, res, next) {
     const roomProps = req.body;
+    roomProps.username = req.username;
     Room.create(roomProps)
       .then(room =>
         res.status(201).json({
@@ -32,10 +33,15 @@ module.exports = {
       isPopulated = checkPopulated.toLowerCase() === 'true';
     }
     if (isPopulated) {
-      query.populate({
-        path: 'polID',
-        model: 'Polygon'
-      });
+      query
+        .populate({
+          path: 'polID',
+          model: 'Polygon'
+        })
+        .populate({
+          path: 'configDevIDs',
+          model: 'ConfigDevice'
+        });
     }
     query
       .then(rooms => {
@@ -60,7 +66,27 @@ module.exports = {
       })
       .catch(next);
   },
-
+  updateConfigs(req, res, next, roomProps) {
+    const { roomId, username, configDevId } = roomProps;
+    Room.updateOne(
+      {
+        _id: roomId,
+        username
+      },
+      { $push: { configDevIDs: configDevId } },
+      {
+        useFindAndModify: false
+      }
+    )
+      .then(result => {
+        if (result.n > 0) {
+          res.status(200).json({ message: 'Create config, update room successful' });
+        } else {
+          res.status(401).json({ message: 'Not authorized' });
+        }
+      })
+      .catch(next);
+  },
   update(req, res, next) {
     const roomId = req.params.id;
     const roomProps = req.body;

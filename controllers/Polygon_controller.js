@@ -9,6 +9,7 @@ module.exports = {
   },
   create(req, res, next) {
     const polygonProps = req.body;
+    polygonProps.username = req.username;
     Polygon.create(polygonProps)
       .then(polygon =>
         res.status(201).json({
@@ -33,7 +34,7 @@ module.exports = {
       })
       .then(count => {
         res.status(200).json({
-          polygon: fetchedPolygons,
+          polygons: fetchedPolygons,
           maxPolygons: count
         });
       })
@@ -53,10 +54,11 @@ module.exports = {
   update(req, res, next) {
     const polygonId = req.params.id;
     const polygonProps = req.body;
-
+    const { username } = req;
     Polygon.updateOne(
       {
-        _id: polygonId
+        _id: polygonId,
+        username
       },
       polygonProps,
       {
@@ -76,9 +78,10 @@ module.exports = {
   delete(req, res, next) {
     const polygonId = req.params.id;
     // const polygonProps = req.body;
-
+    const { username } = req;
     Polygon.deleteOne({
-      _id: polygonId
+      _id: polygonId,
+      username
     })
       .then(result => {
         if (result.n > 0) {

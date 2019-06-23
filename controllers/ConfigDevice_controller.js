@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 const ConfigDevice = require('../models/ConfigDevice.js');
+const RoomController = require('../controllers/Room_controller');
 
 module.exports = {
   greeting(req, res) {
@@ -9,19 +10,40 @@ module.exports = {
   },
   create(req, res, next) {
     const configDevProps = req.body;
+    const { roomId } = req.body;
     configDevProps.username = req.username;
     ConfigDevice.create(configDevProps)
-      .then(configDev =>
-        res.status(201).json({
-          configDevId: configDev._id
-        })
-      )
+      .then(configDev => {
+        const roomProps = {
+          roomId,
+          configDevId: configDev._id,
+          username: configDevProps.username
+        };
+        if (roomId) {
+          // ! Temporary apart from the req
+          RoomController.updateConfigs(req, res, next, roomProps);
+        } else {
+          res.status(201).json({
+            configDevId: configDev._id
+          });
+        }
+      })
       .catch(next);
   },
   readAll(req, res, next) {
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.page;
-    const query = ConfigDevice.find();
+    const { ids } = req.query;
+    let query = '';
+    if (ids) {
+      query = ConfigDevice.find({
+        _id: {
+          $in: ids
+        }
+      });
+    } else {
+      query = ConfigDevice.find();
+    }
     let isPopulated;
     const checkPopulated = req.query.populated;
     let fetchedConfigs;
@@ -41,6 +63,10 @@ module.exports = {
     query
       .then(configs => {
         fetchedConfigs = configs;
+
+        if (ids) {
+          return fetchedConfigs.length;
+        }
         return ConfigDevice.countDocuments();
       })
       .then(count => {
