@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "eslint \"./**/*.js\"",
     "start": "nodemon node index.js",
-    "test": "SET NODE_ENV=test | nodemon --exec mocha --recursive"
+    "test": "SET NODE_ENV=test | nodemon --exec mocha --recursive",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -29,7 +31,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "passport-oauth2": "^1.4.0"
+    "passport-oauth2": "^1.4.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "eslint": "^5.3.0",
@@ -43,5 +46,6 @@
     "nodemon": "^1.17.5",
     "prettier": "^1.16.4",
     "supertest": "^3.1.0"
-  }
+  },
+  "snyk": true
 }
