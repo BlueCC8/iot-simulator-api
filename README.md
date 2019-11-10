@@ -44,6 +44,10 @@ or download the zip file
 
 ...soon...
 
+## Tested with node version 10.17
+### Issues that you might encounter:
+- Sometimes JWT might create the same token for very old users that results in "Not authorised error" (Just delete the old users): fixes coming.
+
 ## Built With
 
 - [Nodemon](https://github.com/remy/nodemon) Watcher
