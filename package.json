@@ -24,7 +24,7 @@
     "express-session": "^1.15.6",
     "jsonwebtoken": "^8.5.0",
     "mongodb": "^3.1.13",
-    "mongoose": "^5.1.1",
+    "mongoose": "^5.12.3",
     "mongoose-unique-validator": "^2.0.2",
     "mongoose-validator": "^2.1.0",
     "multer": "^1.4.1",
@@ -32,7 +32,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "passport-oauth2": "^1.4.0",
-    "snyk": "^1.189.0"
+    "snyk": "^1.230.7"
   },
   "devDependencies": {
     "eslint": "^5.3.0",
